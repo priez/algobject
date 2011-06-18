@@ -2,64 +2,65 @@ package univ.components.nodes;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 
-public class CircleNode extends AbstractShapeNode implements IShapeNode {
+public class CircleNode extends AbstractShapeNode {
 
-	
+	private static final long serialVersionUID = 1723831402003093953L;
 
-	public CircleNode(String alias, String name, boolean draw, boolean doubl,
+	public CircleNode(String name, boolean draw, boolean doubl,
 			Color fill) {
-		super(alias, name, draw, doubl, fill);
+		super(name, draw, doubl, fill);
 	}
 
-	public CircleNode(String alias, String name, boolean draw, boolean doubl) {
-		super(alias, name, draw, doubl);
+	public CircleNode(String name, boolean draw, boolean doubl) {
+		super(name, draw, doubl);
 	}
 
-	public CircleNode(String alias, String name, boolean draw, Color fill) {
-		super(alias, name, draw, fill);
+	public CircleNode(String name, boolean draw, Color fill) {
+		super(name, draw, fill);
 	}
 
-	public CircleNode(String alias, String name, boolean draw) {
-		super(alias, name, draw);
+	public CircleNode(String name, boolean draw) {
+		super(name, draw);
 	}
 
-	public CircleNode(String alias, String name, Color col, int minwidth,
+	public CircleNode(String name, Color col, int minwidth,
 			int minheight, double aspect, int innerxsep, int innerysep,
 			int outerxsep, int outerysep, boolean draw, boolean doubl,
 			Color fill) {
-		super(alias, name, col, minwidth, minheight, aspect, innerxsep, innerysep,
+		super(name, col, minwidth, minheight, aspect, innerxsep, innerysep,
 				outerxsep, outerysep, draw, doubl, fill);
 	}
 
-	public CircleNode(String alias, String name, Color fill) {
-		super(alias, name, fill);
+	public CircleNode(String name, Color fill) {
+		super(name, fill);
 	}
 
-	public CircleNode(String alias, String name, int minsize, double aspect) {
-		super(alias, name, minsize, aspect);
+	public CircleNode(String name, int minsize, double aspect) {
+		super(name, minsize, aspect);
 	}
 
-	public CircleNode(String alias, String name, int minwidth, int minheight,
+	public CircleNode(String name, int minwidth, int minheight,
 			double aspect, boolean draw, boolean doubl, Color fill) {
-		super(alias, name, minwidth, minheight, aspect, draw, doubl, fill);
+		super(name, minwidth, minheight, aspect, draw, doubl, fill);
 	}
 
-	public CircleNode(String alias, String name, int minwidth, int minheight,
+	public CircleNode(String name, int minwidth, int minheight,
 			double aspect) {
-		super(alias, name, minwidth, minheight, aspect);
+		super(name, minwidth, minheight, aspect);
 	}
 
-	public CircleNode(String alias, String name, int minwidth, int minheight) {
-		super(alias, name, minwidth, minheight);
+	public CircleNode(String name, int minwidth, int minheight) {
+		super(name, minwidth, minheight);
 	}
 
-	public CircleNode(String alias, String name, int minsize) {
-		super(alias, name, minsize);
+	public CircleNode(String name, int minsize) {
+		super(name, minsize);
 	}
 
-	public CircleNode(String alias, String name) {
-		super(alias, name);
+	public CircleNode(String name) {
+		super(name);
 	}
 
 	@Override
@@ -74,9 +75,16 @@ public class CircleNode extends AbstractShapeNode implements IShapeNode {
 
 	@Override
 	protected void drawString(Graphics g, int x, int y, int h, int w) {
-		g.drawString(getAlias(), 
+		g.drawString(getName(), 
 			x + getInnerXSep(), 
 			y + Math.max(h, w) / 2 + getInnerYSep());
+	}
+
+	@Override
+	public Point getCenter() {
+		return new Point(
+			getPosition().x + getInnerXSep() + Math.max(stringw, minwidth) / 2,
+			getPosition().y + getInnerYSep() + Math.max(stringh, minheight));
 	}
 
 }

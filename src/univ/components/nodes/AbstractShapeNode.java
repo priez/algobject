@@ -5,13 +5,15 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 
 public abstract class AbstractShapeNode implements IShapeNode {
+
+	private static final long serialVersionUID = 8715497350464468177L;
 	
-	private String name, alias;
-	private int stringw, stringh;
-	private int minwidth, minheight;
+	private String name;
+	protected int stringw, stringh, minwidth, minheight;
 	private boolean doubl, draw;
 	private Color fill, font;
 	private int innerxsep, innerysep, outerxsep, outerysep;
@@ -19,28 +21,28 @@ public abstract class AbstractShapeNode implements IShapeNode {
 	
 	private Point p;
 	
-	protected AbstractShapeNode(String alias, String name) {
-		this(alias, name, DRAW_DEF);
+	protected AbstractShapeNode(String name) {
+		this(name, DRAW_DEF);
 	}
 	
-	protected AbstractShapeNode(String alias, String name, boolean draw) {
-		this(alias, name, draw, DOUBLE_DEF);
+	protected AbstractShapeNode(String name, boolean draw) {
+		this(name, draw, DOUBLE_DEF);
 	}
 	
-	protected AbstractShapeNode(String alias, String name, boolean draw, boolean doubl) {
-		this(alias, name, draw, doubl, FILL_DEF_COL);
+	protected AbstractShapeNode(String name, boolean draw, boolean doubl) {
+		this(name, draw, doubl, FILL_DEF_COL);
 	}
 	
-	protected AbstractShapeNode(String alias, String name, Color fill) {
-		this(alias, name, DRAW_DEF, fill);
+	protected AbstractShapeNode(String name, Color fill) {
+		this(name, DRAW_DEF, fill);
 	}
 	
-	protected AbstractShapeNode(String alias, String name, boolean draw, Color fill) {
-		this(alias, name, draw, DOUBLE_DEF, fill);
+	protected AbstractShapeNode(String name, boolean draw, Color fill) {
+		this(name, draw, DOUBLE_DEF, fill);
 	}
 	
-	protected AbstractShapeNode(String alias, String name, boolean draw, boolean doubl, Color fill) {
-		this(alias, name, 
+	protected AbstractShapeNode(String name, boolean draw, boolean doubl, Color fill) {
+		this(name, 
 			DimSetting.MIN_WIDTH.defaultValue(), 
 			DimSetting.MIN_HEIGHT.defaultValue(), 
 			ASPECT_DEF, DRAW_DEF, 
@@ -48,29 +50,29 @@ public abstract class AbstractShapeNode implements IShapeNode {
 			FILL_DEF_COL);
 	}
 	
-	protected AbstractShapeNode(String alias, String name, int minsize) {
-		this(alias, name, minsize, minsize);
+	protected AbstractShapeNode(String name, int minsize) {
+		this(name, minsize, minsize);
 	}
 	
-	protected AbstractShapeNode(String alias, String name, int minwidth, int minheight) {
-		this(alias, name, minwidth, minheight, ASPECT_DEF);
+	protected AbstractShapeNode(String name, int minwidth, int minheight) {
+		this(name, minwidth, minheight, ASPECT_DEF);
 	}
 	
-	protected AbstractShapeNode(String alias, String name, int minsize, double aspect) {
-		this(alias, name, minsize, minsize, aspect);
+	protected AbstractShapeNode(String name, int minsize, double aspect) {
+		this(name, minsize, minsize, aspect);
 	}
 	
-	protected AbstractShapeNode(String alias, String name, int minwidth, int minheight, double aspect) {
-		this(alias, name, minwidth, minheight, aspect, DRAW_DEF, DOUBLE_DEF, FILL_DEF_COL);
+	protected AbstractShapeNode(String name, int minwidth, int minheight, double aspect) {
+		this(name, minwidth, minheight, aspect, DRAW_DEF, DOUBLE_DEF, FILL_DEF_COL);
 	}
 	
 	protected AbstractShapeNode(
-			String alias, String name, 
+			String name, 
 			int minwidth, int minheight, 
 			double aspect, 
 			boolean draw, boolean doubl, 
 			Color fill) {
-		this(alias, name, 
+		this(name, 
 			FONT_DEF_COL,
 			minwidth, minheight, aspect, 
 			SepSetting.INNER_XSEP.defaultValue(),
@@ -81,14 +83,15 @@ public abstract class AbstractShapeNode implements IShapeNode {
 	}
 	
 	protected AbstractShapeNode(
-			String alias, String name, Color col,
+			String name, Color col,
 			int minwidth, int minheight, 
 			double aspect,
 			int innerxsep, int innerysep,
 			int outerxsep, int outerysep,
 			boolean draw, boolean doubl, 
 			Color fill) {
-		if (alias == null || name == null)
+		super();
+		if (name == null)
 			throw new IllegalArgumentException("L'alias et le nom ne doivent pas être nuls");
 		if (minwidth < 0 || minheight < 0)
 			throw new IllegalArgumentException("Les tailles ne doivent pas être négatives");
@@ -100,7 +103,6 @@ public abstract class AbstractShapeNode implements IShapeNode {
 		
 		if (fill == null || col == null) throw new IllegalArgumentException("Les couleurs ne doivent pas être nulles");
 		
-		this.alias = alias;
 		this.name = name;
 		
 		this.font = col;
@@ -128,11 +130,6 @@ public abstract class AbstractShapeNode implements IShapeNode {
 	@Override
 	public String getName() {
 		return name;
-	}
-
-	@Override
-	public String getAlias() {
-		return alias;
 	}
 
 	@Override
@@ -295,7 +292,7 @@ public abstract class AbstractShapeNode implements IShapeNode {
 
 	@Override
 	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
+
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(
 			RenderingHints.KEY_ANTIALIASING, 
@@ -303,7 +300,7 @@ public abstract class AbstractShapeNode implements IShapeNode {
 		g2.setRenderingHint(
 			RenderingHints.KEY_RENDERING, 
 			RenderingHints.VALUE_RENDER_QUALITY);
-		stringw = g.getFontMetrics().stringWidth(getAlias());
+		stringw = g.getFontMetrics().stringWidth(getName());
 		stringh = g.getFontMetrics().getHeight();
 		int x = getPosition().x,
 			y = getPosition().y,
@@ -336,13 +333,8 @@ public abstract class AbstractShapeNode implements IShapeNode {
 		g2.setColor(s);
 	}
 	
-	
 	@Override
-	public Point getCenter() {
-		return new Point(
-			p.x + innerxsep + Math.max(stringw, minwidth)/ 2,
-			p.y + innerysep + Math.max(stringh, minheight) / 2);
-	}
+	public abstract Point getCenter();
 	
 	@Override
 	public Dimension getDimension() {
@@ -350,5 +342,7 @@ public abstract class AbstractShapeNode implements IShapeNode {
 			2 * innerxsep + 2 * outerxsep + Math.max(stringw, minwidth), 
 			2 * innerysep + 2 * outerysep + Math.max(stringh, minheight));
 	}
+	
+	
 	
 }

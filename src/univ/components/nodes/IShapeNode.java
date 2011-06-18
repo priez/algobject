@@ -74,7 +74,7 @@ import univ.components.IDrawable;
  *
  */
 public interface IShapeNode extends IDrawable {
-	
+
 	/**
 	 * <h3>Type énuméré des valeurs de dimension minimal</h3>
 	 * 
@@ -195,11 +195,13 @@ public interface IShapeNode extends IDrawable {
 		},
 		OUTER_YSEP {
 			@Override
+			public
 			int defaultValue() {
 				return OUSEPDEF;
 			}
 
 			@Override
+			public
 			String defaultValueTex() {
 				return TEX_OUSEPDEF;
 			}
@@ -234,8 +236,6 @@ public interface IShapeNode extends IDrawable {
 	public static double ASPECT_DEF = 1.0;
 	
 	String getName();
-	
-	String getAlias();
 	
 	Color getFontColor();
 	

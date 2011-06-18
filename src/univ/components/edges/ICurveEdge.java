@@ -53,19 +53,65 @@ import univ.components.IDrawable;
 public interface ICurveEdge extends IDrawable {
 	
 	enum EdgeStyle {
-		SOLID,
-		DOTTED,
-		DENSELY_DOTTED,
-		LOOSELY_DOTTED,
-		DASHED,
-		DENSELY_DASHED,
-		LOOSELY_DASHED,
-		DASHDOTTED,
-		DENSELY_DASHDOTTED,
-		LOOSELY_DASHDOTTED,
-		DASHDOTDOTTED,
-		DENSELY_DASHDOTDOTTED,
-		LOOSELY_DASHDOTDOTTED;
+		SOLID {	@Override public float[] getDashPatter() {
+			return new float[] {1};
+		}	},
+		DOTTED { @Override public float[] getDashPatter() {
+			return new float[] {1, 5};
+		}	},
+		DENSELY_DOTTED { @Override public float[] getDashPatter() {
+			return new float[] {5, 2};
+		}	},
+		LOOSELY_DOTTED { @Override public float[] getDashPatter() {
+			return new float[] {5, 10};
+		}	},
+		DASHED { @Override public float[] getDashPatter() {
+			return new float[] {10, 5};
+		}	},
+		DENSELY_DASHED { @Override public float[] getDashPatter() {
+			return new float[] {10, 2};
+		}	},
+		LOOSELY_DASHED { @Override public float[] getDashPatter() {
+			return new float[] {10, 10};
+		}	},
+		DASHDOTTED { @Override public float[] getDashPatter() {
+			return new float[] {10, 5, 5, 5};
+		}	},
+		DENSELY_DASHDOTTED {
+			@Override
+			public float[] getDashPatter() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		},
+		LOOSELY_DASHDOTTED {
+			@Override
+			public float[] getDashPatter() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		},
+		DASHDOTDOTTED {
+			@Override
+			public float[] getDashPatter() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		},
+		DENSELY_DASHDOTDOTTED {
+			@Override
+			public float[] getDashPatter() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		},
+		LOOSELY_DASHDOTDOTTED {
+			@Override
+			public float[] getDashPatter() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
 		
 		/**
 		 * @return le texte de la sortie java associée au style
@@ -73,9 +119,17 @@ public interface ICurveEdge extends IDrawable {
 		public String getLatex() {
 			return EdgeStyle.this.name().toLowerCase().replace("_", " ");
 		}
+		
+		public abstract float[] getDashPatter();
 	}
+
+	void setValue(String v);
+	
+	String getValue();
 	
 	void setColor(Color c);
 	
 	Color getColor();
+	
+	void setEdgeStyle(EdgeStyle es);
 }
