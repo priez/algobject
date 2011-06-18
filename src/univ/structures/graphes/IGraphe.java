@@ -10,8 +10,8 @@ import univ.listener.PCL;
  * 
  * Un <i>graphe G</i> est un couple <i>(S,A)</i>, où
  * <ul>
- * 	<li> <i>S</i> est appelé l'ensemble des <i>sommets</i> de <i>G</i>
- *  <li> <i>A</i> est appelé l'ensemble des <i>paires (arcs</i> ou <i>arêtes) </i> de <i>G</i>
+ * 	<li> <i>S</i> est l'ensemble des <i>sommets</i> de <i>G</i>
+ *  <li> <i>A</i> est l'ensemble des <i>paires (arcs</i> ou <i>arêtes) </i> de <i>G</i>
  * </ul>
  * 
  * On parle de <i>graphe non orienté</i> lorsque <i>A</i> est un ensemble

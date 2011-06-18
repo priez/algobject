@@ -52,7 +52,7 @@ import univ.components.IDrawable;
  */
 public interface ICurveEdge extends IDrawable {
 	
-	enum EdgeStyle {
+	public enum EdgeStyle {
 		SOLID {	@Override public float[] getDashPatter() {
 			return new float[] {1};
 		}	},

@@ -37,15 +37,15 @@ public class QuadraticEdge extends AbstractCurveEdge {
 			* (l.getCenter().getY() > f.getCenter().getY() ? 1 : -1));
 		// point de controle
 		double 	beta = alpha + dist * PHI;
-		double x,y, x1,y1;
+		double x,y;//, x1,y1;
 		x = f.getCenter().getX() + dist * Math.cos(beta);
-		x1 = (f.getCenter().getX() + l.getCenter().getX()) / 2;
-		x = (x + x1) / 2;
+		//x1 = (f.getCenter().getX() + l.getCenter().getX()) / 2;
+		//x = (x + x1) / 2;
 		
 		y = f.getCenter().getY() + dist * Math.sin(beta);
-		y1 = (f.getCenter().getY() + l.getCenter().getY()) / 2;
-		y = (y + y1) / 2;
-		
+		//y1 = (f.getCenter().getY() + l.getCenter().getY()) / 2;
+		//y = (y + y1) / 2;
+		System.out.println(beta + "::"+ x + "::" + y);
 		// courbe
 		QuadCurve2D qc = new QuadCurve2D.Double(
 			f.getCenter().getX(), f.getCenter().getY(),
@@ -59,6 +59,9 @@ public class QuadraticEdge extends AbstractCurveEdge {
 		
 		g2.draw(qc);
 		
+		g2.setStroke(new BasicStroke(4f));
+		g2.drawLine((int)x, (int)y, (int)x, (int)y);
+		//g2.drawLine(f.getCenter().x, f.getCenter().y, x2, y2)
 		g2.setStroke(stroke);
 	}
 	

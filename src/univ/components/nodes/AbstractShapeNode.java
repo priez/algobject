@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 
 public abstract class AbstractShapeNode implements IShapeNode {
@@ -343,6 +342,11 @@ public abstract class AbstractShapeNode implements IShapeNode {
 			2 * innerysep + 2 * outerysep + Math.max(stringh, minheight));
 	}
 	
-	
+	@Override
+	public boolean isOn(Point point) {
+		int dx = point.x - getPosition().x,
+			dy = point.y - getPosition().y;
+		return (dx >= 0 && dy >= 0 && dx <= getDimension().width && dy <= getDimension().height);
+	}
 	
 }

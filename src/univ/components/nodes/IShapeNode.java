@@ -284,4 +284,6 @@ public interface IShapeNode extends IDrawable {
 	Point getCenter();
 	
 	Dimension getDimension();
+
+	boolean isOn(Point point);
 }
