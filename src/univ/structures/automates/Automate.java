@@ -77,7 +77,7 @@ public class Automate<A, E extends IEtat<A>> extends Graphe<ITransition<A>> impl
 		if (generateur.deterministe() 
 				&& mapmapTrans.get(trans.getSortant())
 					.get(trans.getValeur()).size() > 0) 
-			throw new IllegalArgumentException("Un DFA ne peut avoir plusieurs transition d'un état par un même symbole.");
+			throw new IllegalStateException("Un DFA ne peut avoir plusieurs transition d'un état par un même symbole.");
 		super.addPaire(trans);
 		if (!mapmapTrans.containsKey(trans.getSortant())) {
 			mapmapTrans.put(
