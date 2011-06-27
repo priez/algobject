@@ -54,8 +54,7 @@ public class Determinisation {
 						creation(etatsEntrants, dfa, map, nontraite);
 					q = map.get(etatsEntrants);
 					dfa.addTransition(new Transition<A>(p, q, a));
-				}
-		}	}
+		}	}	}
 		return dfa;
 	}
 	
