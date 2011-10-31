@@ -64,7 +64,8 @@ import univ.structures.graphes.ISommet;
  *
  * @param <A> le type des symbôles de &Sigma; de l'alphabet de l'automate.
  */
-public interface IAutomate<A, E extends IEtat<A>> extends IGraphe<ITransition<A>> {
+public interface IAutomate<A, E extends IEtat<A>> 
+	extends IGraphe<ITransition<A>>, Cloneable {
 	
 	public static final String 	ETAT_AJOUTE = "1",
 								ETAT_ENLEVE = "2",

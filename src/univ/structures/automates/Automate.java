@@ -193,6 +193,7 @@ public class Automate<A, E extends IEtat<A>> extends Graphe<ITransition<A>> impl
 			+ etatsFinaux.hashCode();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
@@ -202,8 +203,53 @@ public class Automate<A, E extends IEtat<A>> extends Graphe<ITransition<A>> impl
 		sb.append("\t" + "Q : " + getEtats().toString() + ln);
 		sb.append("\t" + "i : " + (getInitial() == null ? "null" : getInitial()) + ln);
 		sb.append("\t" + "F : " + getEtatsFinaux().toString() + ln);
-		sb.append("\t" + "delta : " + getPaires().toString());
+		sb.append("\t" + "delta :" +ln);
+		sb.append("\t\tq\\a :\t");
+		for (A a : getAlphabet()) sb.append(a + "\t");
+		sb.append(ln);
+		for (IEtatDFA<A> p : (Set<IEtatDFA<A>>) getEtats()) {
+			sb.append("\t\t" + p + " :\t");
+			for (A a : getAlphabet()) {
+				if (generateur.deterministe())
+					sb.append(((IEtatDFA<A>) p).delta(a));
+				else 
+					sb.append(((IEtatNFA<A>) p).delta(a));
+				sb.append("\t");
+			}
+			sb.append(ln);
+		}
+		
+		//sb.append("\t" + "delta : " + getPaires().toString());
 		return sb.toString();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj != null && obj.getClass() == getClass()) {
+			@SuppressWarnings("unchecked")
+			Automate<A, E> a = (Automate<A, E>) obj;
+			
+			if (a.generateur.equals(generateur) 
+				&& a.getEtats().size() == getEtats().size()
+				&& a.getEtatsFinaux().size() == getEtatsFinaux().size()
+				&& a.getPaires().size() == getPaires().size()) {
+				E init = getInitial(), 
+				  initA = a.getInitial();
+				SortedSet<E> mark = new TreeSet<E>();
+				return equals(init, initA, mark);
+		}	}
+		return false;
+	}
+
+	private boolean equals(E p, E q, SortedSet<E> mark) {
+		// TODO
+		return true;
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
 	}
 	
 	
