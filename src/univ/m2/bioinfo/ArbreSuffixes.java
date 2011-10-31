@@ -1,26 +1,46 @@
 package univ.m2.bioinfo;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import univ.structures.automates.Automate;
 import univ.structures.automates.IEtatDFA;
 import univ.structures.automates.Transition;
 
+/**
+ * <h2>Algorithme de construction d'arbre de suffixes</h2>
+ * 
+ * L'algorithme suivant construit un automate (trie) déterministe
+ * reconnaissant l'ensemble des suffixes d'un mot <code>y</code>.
+ * 
+ * Cette classe implante les algorithmes p 166 du livre cité ci-après.
+ * 
+ * <hr>
+ * 
+ * <u><i>Algorithmique du texte</i></u>
+ * de Maxime <span style="font-variant: small-caps;">Crochemore</span>, 
+ * Christophe <span style="font-variant: small-caps;">Hancart</span> et 
+ * Thierry <span style="font-variant: small-caps;">Lecroq</span>
+ * 
+ * <hr>
+ * @author EliX
+ *
+ */
 public class ArbreSuffixes extends Automate<Character, IEtatDFA<Character>> {
 	
-	char[] y;
-	Map<IEtatDFA<Character>, Integer> sortie;
+	String y;
 	int n;
-	IEtatDFA<Character> fourche;
+	
+	private SortedMap<IEtatDFA<Character>, Integer> sortie;
+	private IEtatDFA<Character> fourche;
 
-	public ArbreSuffixes(String y) {
+	public ArbreSuffixes(String y, int n) {
 		super(GenEtat.DFA);
-		this.setInitial(this.createEtat());
+		this.createEtat().setInitial();
 		
-		this.y = y.toCharArray();
-		this.n = y.length();
-		sortie = new HashMap<IEtatDFA<Character>, Integer>();
+		this.y = y;
+		this.n = n;
+		sortie = new TreeMap<IEtatDFA<Character>, Integer>();
 		
 		algo();
 	}
@@ -28,24 +48,29 @@ public class ArbreSuffixes extends Automate<Character, IEtatDFA<Character>> {
 	private void algo() {
 		int k;
 		IEtatDFA<Character> p, q;
+		char yj;
+		
 		this.fourche = null;
 		for (int i = 0; i < n; i++) {
 			k = descLente(this.getInitial(), i);
 			p = fourche;
 			for (int j = k; j < n; j++) {
 				q = this.createEtat();
-				this.addSymbole(y[j]);
-				this.addTransition(new Transition<Character>(p, q, y[j]));
+				yj = y.charAt(j);
+				this.addSymbole(yj);
+				this.addTransition(new Transition<Character>(p, q, yj));
 				p = q;
 			}
 			sortie.put(p, i);
+			p.setFinal();
 		}
 		sortie.put(this.getInitial(), n);
+		this.getInitial().setFinal();
 	}
 	
 	private int descLente(IEtatDFA<Character> p, int k) {
-		while (k < n && p.delta(y[k]) != null) {
-			p = p.delta(y[k]);
+		while (k < n && p.delta(y.charAt(k)) != null) {
+			p = p.delta(y.charAt(k));
 			k++;
 		}
 		if (p != null) this.fourche = p;
@@ -53,7 +78,7 @@ public class ArbreSuffixes extends Automate<Character, IEtatDFA<Character>> {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(new ArbreSuffixes("ababbb"));
+		System.out.println(new ArbreSuffixes("ababbb", 6));
 	}
 
 }
