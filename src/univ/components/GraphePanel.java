@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import univ.components.edges.DirectEdge;
 import univ.components.edges.ICurveEdge;
 import univ.components.edges.ICurveEdge.EdgeStyle;
-import univ.components.edges.QuadraticEdge;
 import univ.components.nodes.CircleNode;
 import univ.components.nodes.EllipseNode;
 import univ.components.nodes.IShapeNode;

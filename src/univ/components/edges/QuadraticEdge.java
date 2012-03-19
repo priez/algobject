@@ -9,8 +9,6 @@ import univ.components.nodes.IShapeNode;
 
 public class QuadraticEdge extends AbstractCurveEdge {
 
-	private static final long serialVersionUID = -2157682016238486806L;
-	
 	private static final double PHI = 1 / Math.sqrt(2);
 
 	public QuadraticEdge(IShapeNode f, IShapeNode l, String val) {

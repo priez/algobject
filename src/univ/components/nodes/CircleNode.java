@@ -6,8 +6,6 @@ import java.awt.Point;
 
 public class CircleNode extends AbstractShapeNode {
 
-	private static final long serialVersionUID = 1723831402003093953L;
-
 	public CircleNode(String name, boolean draw, boolean doubl,
 			Color fill) {
 		super(name, draw, doubl, fill);

@@ -8,8 +8,6 @@ import univ.components.nodes.IShapeNode;
 
 public abstract class AbstractCurveEdge implements ICurveEdge {
 
-	private static final long serialVersionUID = -8762257254290058399L;
-
 	private Color col;
 	
 	private String v;

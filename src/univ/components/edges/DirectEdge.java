@@ -9,8 +9,6 @@ import univ.components.nodes.IShapeNode;
 
 public class DirectEdge extends AbstractCurveEdge {
 
-	private static final long serialVersionUID = 5236759222923862479L;
-
 	public DirectEdge(IShapeNode f, IShapeNode l, String val) {
 		super(f, l, val, EdgeStyle.SOLID);
 	}

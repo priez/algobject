@@ -9,8 +9,6 @@ import java.awt.RenderingHints;
 
 public abstract class AbstractShapeNode implements IShapeNode {
 
-	private static final long serialVersionUID = 8715497350464468177L;
-	
 	private String name;
 	protected int stringw, stringh, minwidth, minheight;
 	private boolean doubl, draw;

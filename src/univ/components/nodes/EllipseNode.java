@@ -6,8 +6,6 @@ import java.awt.Point;
 
 public class EllipseNode extends AbstractShapeNode {
 
-	private static final long serialVersionUID = 7456294221771687441L;
-
 	public EllipseNode(String name, boolean draw, boolean doubl,
 			Color fill) {
 		super(name, draw, doubl, fill);

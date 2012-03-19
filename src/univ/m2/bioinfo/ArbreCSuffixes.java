@@ -5,7 +5,6 @@ import java.util.TreeMap;
 
 import univ.structures.automates.Automate;
 import univ.structures.automates.IEtatDFA;
-import univ.structures.automates.ITransition;
 
 public class ArbreCSuffixes extends Automate<String, IEtatDFA<String>> {
 	
@@ -29,7 +28,7 @@ public class ArbreCSuffixes extends Automate<String, IEtatDFA<String>> {
 
 	private void algo() {
 		int k;
-		IEtatDFA<String> t;
+		//IEtatDFA<String> t;
 		
 		ls.put(this.getInitial(), this.getInitial());
 		fourche = this.getInitial();
@@ -38,8 +37,8 @@ public class ArbreCSuffixes extends Automate<String, IEtatDFA<String>> {
 			k = Math.max(k, i);
 			if (ls.get(fourche) == null) {
 				// notion d'arbre ==> il n'y a qu'un état entrant au plus.
-				ITransition<String> trans = fourche.getEntrants().iterator().next();
-				t = (IEtatDFA<String>) trans.getSortant();
+				//ITransition<String> trans = fourche.getEntrants().iterator().next();
+				//t = (IEtatDFA<String>) trans.getSortant();
 				// TODO
 			}
 		}

@@ -7,8 +7,6 @@ import java.awt.Polygon;
 
 public class DiamondNode extends AbstractShapeNode {
 
-	private static final long serialVersionUID = -5193373333094698596L;
-
 	public DiamondNode(String name, boolean draw, boolean doubl,
 			Color fill) {
 		super(name, draw, doubl, fill);

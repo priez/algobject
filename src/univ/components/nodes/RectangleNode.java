@@ -6,8 +6,6 @@ import java.awt.Point;
 
 public class RectangleNode extends AbstractShapeNode {
 
-	private static final long serialVersionUID = 4566265184532006553L;
-
 	public RectangleNode(String name, boolean draw, boolean doubl,
 			Color fill) {
 		super(name, draw, doubl, fill);
