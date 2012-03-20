@@ -3,6 +3,7 @@ package univ.components.nodes;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 
 import univ.components.IDrawable;
 
@@ -286,4 +287,6 @@ public interface IShapeNode extends IDrawable {
 	Dimension getDimension();
 
 	boolean isOn(Point point);
+	
+	boolean isIn(Rectangle rec);
 }

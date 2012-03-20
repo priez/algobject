@@ -5,11 +5,14 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -27,6 +30,8 @@ public class GraphePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
+	public static Color SELECTED_COL = Color.green;
+	
 	private Set<IShapeNode> setnodes;
 	
 	private Set<ICurveEdge> setedges;
@@ -37,9 +42,7 @@ public class GraphePanel extends JPanel {
 		super.setPreferredSize(new Dimension(600, 400));
 		//super.setLayout(null);
 		
-		setnodes = new HashSet<IShapeNode>();
-		setedges = new HashSet<ICurveEdge>();
-		
+		createModel();
 		createControllers();
 		
 		/*****/
@@ -74,37 +77,157 @@ public class GraphePanel extends JPanel {
 		setedges.add(e2);
 	}
 
+	private void createModel() {
+		setnodes = new HashSet<IShapeNode>();
+		setedges = new HashSet<ICurveEdge>();
+	}
+
 	private IShapeNode movable;
+	private Map<IShapeNode, Point> squelette;
+	private Point origine; 
+	private Rectangle select;
+	private Set<IShapeNode> selectedNodes;
+	private Map<IShapeNode, Color> selectedNodesCol;
+	
 	private void createControllers() {
 		movable = null;
-		// Listener qui gère les noeuds à déplacer
+		select = null;
+		squelette = new HashMap<IShapeNode, Point>();
+		selectedNodes = new HashSet<IShapeNode>();
+		selectedNodesCol = new HashMap<IShapeNode, Color>();
+		
+		/* sélection de noeud */
 		this.addMouseListener(new MouseAdapter() {
+			
 			@Override
-			public void mousePressed(MouseEvent m) {
-				for (IShapeNode n : setnodes) {
-					if (n.isOn(m.getPoint())) { 
-						movable = n;
-						break;
+			public void mouseClicked(MouseEvent e) {
+				// si aucun noeud n'est sélectionné : 
+				// // soit on sélectionne un noeud
+				// // soit on clique dans le vide
+				if (selectedNodes.isEmpty()) {
+					
+					for (IShapeNode n : setnodes)
+						if (n.isOn(e.getPoint())) {
+							selectNode(n);
+							movable = n;
+							GraphePanel.this.repaint();
+						}
+				// sinon un ou plusieurs noeud sont sélectionnés
+			 	} else {
+					// 1 cas on clique dans le vide : on déselectionne tout.
+			 		// 2 cas on clique sur un noeud particulier : on déselectionne tout et sélection celui-ci
+			 		for (IShapeNode n : setnodes) {
+			 			if (n.isOn(e.getPoint())) {
+			 				selectNode(n);
+			 			} else if (selectedNodes.contains(n))
+			 				deselectNode(n);
+			 		}
+			 		GraphePanel.this.repaint();
+				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// si on clique dans le vide : rectangle ou déplacement
+				if (movable == null) {
+					// si on est sur un noeud non sélectionné
+					for (IShapeNode n : setnodes) 
+						if (n.isOn(e.getPoint()))
+							movable = n;
+					// sinon on fait un rectangle
+					if (movable == null) {
+						select = new Rectangle(e.getPoint());
+						origine = e.getPoint();
 				}	}
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent m) {
 				movable = null;
+				select = null;
+				origine = null;
+				GraphePanel.this.repaint();
 			}
 		});
 		
 		this.addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				if (movable != null) {
-					int x = movable.getPosition().x - movable.getCenter().x,
-						y = movable.getPosition().y - movable.getCenter().y;
-					movable.setPosition(new Point(e.getPoint().x + x, e.getPoint().y + y));
-					GraphePanel.this.repaint();
+			int w,h;
+			/* création d'un squelette par rapport à un objet déplacable */
+			private void createSquelette() {
+				Point p;
+				int x,y;
+				for (IShapeNode n : selectedNodes) {
+					x = movable.getPosition().x - n.getPosition().x;
+					y = movable.getPosition().y - n.getPosition().y;
+					p = new Point(x,y);
+					squelette.put(n, p);
+			}	}
+			
+			/* déstruction du sequelette */
+			private void deplaceSquelette() {
+				int x,y;
+				for (IShapeNode n : selectedNodes) {
+					x = movable.getPosition().x - squelette.get(n).x;
+					y = movable.getPosition().y - squelette.get(n).y;
+					n.setPosition(new Point(x,y));
 				}
 			}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				/* déplacement d'un ou plusieurs noeuds */
+				if (movable != null) {
+					// calcul du centre de l'objet (principal) à déplacer
+					int x = movable.getPosition().x - movable.getCenter().x,
+						y = movable.getPosition().y - movable.getCenter().y;
+					// déplacement de l'objet principal
+					movable.setPosition(new Point(e.getPoint().x + x, e.getPoint().y + y));
+					// déplacement des autres objets.
+					if (selectedNodes.size() > 1) {
+						// si le "squelette" de déplacement des objets n'est pas crée, on crée
+						if (squelette.isEmpty())
+							createSquelette();
+						// puis on déplace le tout
+						deplaceSquelette();
+					}
+					GraphePanel.this.repaint();
+				/* sinon si on clique dans le vide pour sélectionner dans un rectangle */
+				} else if (select != null) {
+					// dimension du rectangle
+					w = Math.abs(origine.x - e.getPoint().x);
+					h = Math.abs(origine.y - e.getPoint().y);
+					// test des noeuds inclu ou exclu du rectangle
+					for (IShapeNode n : setnodes) {
+						if (n.isIn(select)) {
+							if (!selectedNodes.contains(n)) 
+								selectNode(n);
+						} else { 
+							if (selectedNodes.contains(n))
+								deselectNode(n);
+					}	}	
+					// positionnement du rectangle
+					if (origine.x > e.getPoint().x)
+						select.x = e.getPoint().x;
+					select.width = w;
+					if (origine.y > e.getPoint().y)
+						select.y = e.getPoint().y;
+					select.height = h;
+					
+					GraphePanel.this.repaint();
+				} 
+			}
 		});
+	}
+	
+	public void selectNode (IShapeNode n) {
+		selectedNodes.add(n);
+		selectedNodesCol.put(n, n.getFill());
+		n.setFill(SELECTED_COL);
+	}
+	
+	public void deselectNode (IShapeNode n) {
+		n.setFill(selectedNodesCol.get(n));
+		selectedNodes.remove(n);
 	}
 
 	@Override
@@ -126,6 +249,11 @@ public class GraphePanel extends JPanel {
 		
 		for (IShapeNode n : setnodes)
 			n.draw(g);
+		
+		if (select != null) {
+			g2.setColor(SELECTED_COL);
+			g2.draw(select);
+		}
 	}
 	
 	
