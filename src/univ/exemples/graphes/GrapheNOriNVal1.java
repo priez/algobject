@@ -3,7 +3,6 @@ package univ.exemples.graphes;
 import univ.structures.graphes.Arc;
 import univ.structures.graphes.Graphe;
 import univ.structures.graphes.IArc;
-import univ.structures.graphes.IAreteValue;
 import univ.structures.graphes.IGraphe;
 import univ.structures.graphes.ISommet;
 
@@ -21,7 +20,7 @@ public class GrapheNOriNVal1 {
 	 */
 	public static void main(String[] args) {
 		// Déclaration et initialisation du graphe orienté et valué par des entiers.
-		IGraphe<IArc> G = new Graphe<IArc>(IAreteValue.class);
+		IGraphe<IArc> G = new Graphe<IArc>(IArc.class);
 		
 		// création des sommets
 		ISommet<IArc>

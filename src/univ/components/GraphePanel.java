@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,49 +20,65 @@ import javax.swing.JPanel;
 
 import univ.components.edges.DirectEdge;
 import univ.components.edges.ICurveEdge;
-import univ.components.edges.ICurveEdge.EdgeStyle;
 import univ.components.nodes.CircleNode;
-import univ.components.nodes.EllipseNode;
 import univ.components.nodes.IShapeNode;
-import univ.components.nodes.RectangleNode;
+import univ.components.nodes.IShapeNode.ColorSetting;
 import univ.components.test.TestViewer;
+import univ.sous_typage.SousTypage;
+import univ.structures.graphes.Arc;
+import univ.structures.graphes.Graphe;
+import univ.structures.graphes.IArc;
+import univ.structures.graphes.IGraphe;
+import univ.structures.graphes.IPaire;
+import univ.structures.graphes.ISommet;
+import univ.structures.graphes.IValuation;
 
-public class GraphePanel extends JPanel {
+public class GraphePanel<E extends IPaire<E>> extends JPanel {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5323329410127006835L;
 
-	private static final long serialVersionUID = 1L;
+	public ColorSetting selected_col = ColorSetting.GREEN;
 	
-	public static Color SELECTED_COL = Color.green;
+	public static Dimension DIM = new Dimension(600, 400);
 	
-	private Set<IShapeNode> setnodes;
+	protected Map<ISommet<E>, IShapeNode> mapSomShap;
+	protected Map<IPaire<E>, ICurveEdge> mapPairCurv;
 	
-	private Set<ICurveEdge> setedges;
+	protected Set<IShapeNode> setnodes;
+	protected Set<ICurveEdge> setedges;
 	
-	GraphePanel (Color bg) {
+	
+	protected IGraphe<E> model;
+	
+	GraphePanel (Color bg, IGraphe<E> g) {
 		super();
 		super.setBackground(bg);
-		super.setPreferredSize(new Dimension(600, 400));
+		super.setPreferredSize(DIM);
 		//super.setLayout(null);
 		
-		createModel();
+		createModel(g);
 		createControllers();
 		
 		/*****/
-		IShapeNode n1 = new CircleNode("00");
+		/*IShapeNode n1 = new CircleNode("00");
 		n1.setPosition(new Point(100, 100));
 		n1.setDraw(true);
-		n1.setFill(Color.DARK_GRAY);
-		n1.setFontColor(Color.white);
+		n1.setFill(ColorSetting.MAGENTA);
+		n1.setFontColor(ColorSetting.WHITE);
 		
-		IShapeNode n2 = new EllipseNode("alpha");
+		IShapeNode n2 = new DiamondNode("");
 		n2.setDraw(true);
-		n2.setFill(Color.orange);
+		n2.setFill(ColorSetting.ORANGE);
 		n2.setPosition(new Point(100, 200));
 		
 		IShapeNode n3 = new RectangleNode("2");
 		n3.setDouble(true);
 		n3.setDraw(true);
-		n3.setFill(Color.red);
-		n3.setFontColor(Color.white);
+		n3.setFill(ColorSetting.RED);
+		n3.setFontColor(ColorSetting.WHITE);
 		n3.setPosition(new Point(300,300));
 		
 		setnodes.add(n1);
@@ -74,27 +91,91 @@ public class GraphePanel extends JPanel {
 		e1.setEdgeStyle(EdgeStyle.DASHDOTTED);
 		e2.setEdgeStyle(EdgeStyle.DOTTED);
 		setedges.add(e1);
-		setedges.add(e2);
+		setedges.add(e2);*/
 	}
 
-	private void createModel() {
+	private void createModel(IGraphe<E> g) {
 		setnodes = new HashSet<IShapeNode>();
 		setedges = new HashSet<ICurveEdge>();
+		mapSomShap = new HashMap<ISommet<E>, IShapeNode>();
+		mapPairCurv = new HashMap<IPaire<E>, ICurveEdge>();
+		
+		setModel(g);
+	}
+	
+	public void addNode(IShapeNode shape) {
+		if (shape == null) 
+			throw new NullPointerException();
+		if (setnodes.contains(shape)) 
+			throw new IllegalArgumentException("Ce noeud existe déjà");
+		
+		ISommet<E> s = model.createSommet();
+		mapSomShap.put(s, shape);
+		
+		repaint();
+	}
+	
+	public void addEdge(ICurveEdge ce) {
+		if (ce == null)
+			throw new NullPointerException();
+		if (setedges.contains(ce)) 
+			throw new IllegalArgumentException("Cette paire existe déjà");
+		
+		setedges.add(ce);
+		// FIXME ajouter au model... l'idée est de créer une enum qui génère des 
+		// // paires en fonctions des types de graphes (orienté, valué...)
+		
+		repaint();
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void setModel(IGraphe<E> g) {
+		setnodes.clear();
+		setedges.clear();
+		
+		model = g;
+		// ajout des sommets du model
+		// // positionnement aléatoire
+		for (ISommet<E> s : model.getSommets()) {
+			IShapeNode node = new CircleNode(s.toString());
+			node.setPosition(new Point(
+					(int) (Math.random() * Math.max(getSize().width, DIM.width)), 
+					(int) (Math.random() * Math.max(getSize().height, DIM.height))));
+			node.setDraw(true);
+			setnodes.add(node);
+			mapSomShap.put(s, node);
+		}
+		// ajout des paires du model
+		for (IPaire<E> p : model.getPaires()) {
+			Iterator<ISommet<E>> it = p.getElements().iterator();
+			
+			String val = "";
+			if (SousTypage.estSousType(p.getClass(), IValuation.class)) 
+				val = ((IValuation) p).getValeur().toString();
+			ICurveEdge ce = new DirectEdge(
+					mapSomShap.get(it.next()), 
+					mapSomShap.get(it.next()),
+					val);
+			setedges.add(ce);
+			mapPairCurv.put(p, ce);
+		}
+		this.repaint();
 	}
 
 	private IShapeNode movable;
+	protected IShapeNode release;
 	private Map<IShapeNode, Point> squelette;
-	private Point origine; 
+	private Point origine;
 	private Rectangle select;
-	private Set<IShapeNode> selectedNodes;
-	private Map<IShapeNode, Color> selectedNodesCol;
+	protected Set<IShapeNode> selectedNodes;
+	private Map<IShapeNode, ColorSetting> selectedNodesCol;
 	
-	private void createControllers() {
+	protected void createControllers() {
 		movable = null;
 		select = null;
 		squelette = new HashMap<IShapeNode, Point>();
 		selectedNodes = new HashSet<IShapeNode>();
-		selectedNodesCol = new HashMap<IShapeNode, Color>();
+		selectedNodesCol = new HashMap<IShapeNode, ColorSetting>();
 		
 		/* sélection de noeud */
 		this.addMouseListener(new MouseAdapter() {
@@ -116,11 +197,11 @@ public class GraphePanel extends JPanel {
 			 	} else {
 					// 1 cas on clique dans le vide : on déselectionne tout.
 			 		// 2 cas on clique sur un noeud particulier : on déselectionne tout et sélection celui-ci
+			 		for (IShapeNode n : new HashSet<IShapeNode>(selectedNodes)) 
+			 			deselectNode(n);
 			 		for (IShapeNode n : setnodes) {
-			 			if (n.isOn(e.getPoint())) {
+			 			if (n.isOn(e.getPoint()))
 			 				selectNode(n);
-			 			} else if (selectedNodes.contains(n))
-			 				deselectNode(n);
 			 		}
 			 		GraphePanel.this.repaint();
 				}
@@ -143,6 +224,7 @@ public class GraphePanel extends JPanel {
 
 			@Override
 			public void mouseReleased(MouseEvent m) {
+				release = movable;
 				movable = null;
 				select = null;
 				origine = null;
@@ -222,7 +304,7 @@ public class GraphePanel extends JPanel {
 	public void selectNode (IShapeNode n) {
 		selectedNodes.add(n);
 		selectedNodesCol.put(n, n.getFill());
-		n.setFill(SELECTED_COL);
+		n.setFill(selected_col);
 	}
 	
 	public void deselectNode (IShapeNode n) {
@@ -251,14 +333,20 @@ public class GraphePanel extends JPanel {
 			n.draw(g);
 		
 		if (select != null) {
-			g2.setColor(SELECTED_COL);
+			g2.setColor(selected_col.col());
 			g2.draw(select);
 		}
 	}
 	
 	
 	public static void main(String[] args) {
-		GraphePanel gp = new GraphePanel(Color.white);
+		Graphe<IArc> g = new Graphe<IArc>(Arc.class);
+		ISommet<IArc> n1,n2;
+		n1 = g.createSommet();
+		n2 = g.createSommet();
+		g.addPaire(new Arc(n1,n2));
+		
+		GraphePanel<IArc> gp = new GraphePanel<IArc>(Color.white, g);
 		
 		TestViewer.showOnFrame(gp);
 	}

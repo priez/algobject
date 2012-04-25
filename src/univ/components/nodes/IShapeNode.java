@@ -13,8 +13,8 @@ import univ.components.IDrawable;
  * L'objectif de cette interface est de définir un noeud à la 
  * manière de <i>TikZ</i>.<br><br>
  * 
- * <b>node[</b><i>options</i><b>](</b><i>name</i><b>) at 
- * 	(</b><i>coordonnate</i><b>){</b><i>text</i><b>}</b><br><br>
+ * <b>node[</b><i>options</i><b>](</b><i>id</i><b>) at 
+ * 	(</b><i>coordonnate</i><b>){</b><i>name</i><b>}</b><br><br>
  * 
  * La liste des options :
  * <ul>
@@ -132,6 +132,32 @@ public interface IShapeNode extends IDrawable {
 		abstract int defaultValue();
 	}
 	
+	enum ColorSetting {
+		YELLOW(Color.yellow),
+		RED(Color.red),
+		GREEN(Color.green),
+		ORANGE(Color.orange),
+		MAGENTA(Color.magenta),
+		BLUE(Color.blue),
+		WHITE(Color.white),
+		BLACK(Color.black);
+		
+		private Color col;
+		
+		public Color col() {
+			return col;
+		}
+		
+		@Override
+		public String toString() {
+			return this.name().toLowerCase();
+		}
+		
+		ColorSetting(Color c) {
+			col = c;
+		}
+	}
+	
 	/**
 	 * <h3>Type énuméré des valeurs de séparation</h3>
 	 * 
@@ -228,10 +254,10 @@ public interface IShapeNode extends IDrawable {
 		abstract String defaultValueTex();
 	}
 	
-	public static Color FILL_DEF_COL = Color.white,
-						FONT_DEF_COL = Color.black;
+	public static ColorSetting FILL_DEF_COL = ColorSetting.WHITE,
+						FONT_DEF_COL = ColorSetting.BLACK;
 	
-	public static boolean 	DRAW_DEF = false,
+	public static boolean 	DRAW_DEF = true,
 							DOUBLE_DEF = false;
 	
 	public static double ASPECT_DEF = 1.0;
@@ -251,7 +277,7 @@ public interface IShapeNode extends IDrawable {
 	
 	double getShapeAspect();
 	
-	void setFontColor(Color c);
+	void setFontColor(ColorSetting c);
 	
 	void setOuterXSep(int s);
 	void setOuterYSep(int s);
@@ -271,12 +297,12 @@ public interface IShapeNode extends IDrawable {
 	boolean isDouble();
 	boolean isDraw();
 	
-	Color getFill();
+	ColorSetting getFill();
 	
 	void setDouble(boolean b);
 	void setDraw(boolean b);
 	
-	void setFill(Color c);
+	void setFill(ColorSetting c);
 	
 	void setPosition(Point p);
 	
@@ -289,4 +315,9 @@ public interface IShapeNode extends IDrawable {
 	boolean isOn(Point point);
 	
 	boolean isIn(Rectangle rec);
+	
+	String latex();
+	
+	int getId();
+
 }

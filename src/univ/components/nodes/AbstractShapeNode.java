@@ -13,9 +13,12 @@ public abstract class AbstractShapeNode implements IShapeNode {
 	private String name;
 	protected int stringw, stringh, minwidth, minheight;
 	private boolean doubl, draw;
-	private Color fill, font;
+	private ColorSetting fill, font;
 	private int innerxsep, innerysep, outerxsep, outerysep;
 	private double aspect;
+	
+	private static int ID = 0;
+	private int id;
 	
 	private Point p;
 	
@@ -31,21 +34,21 @@ public abstract class AbstractShapeNode implements IShapeNode {
 		this(name, draw, doubl, FILL_DEF_COL);
 	}
 	
-	protected AbstractShapeNode(String name, Color fill) {
+	protected AbstractShapeNode(String name, ColorSetting fill) {
 		this(name, DRAW_DEF, fill);
 	}
 	
-	protected AbstractShapeNode(String name, boolean draw, Color fill) {
+	protected AbstractShapeNode(String name, boolean draw, ColorSetting fill) {
 		this(name, draw, DOUBLE_DEF, fill);
 	}
 	
-	protected AbstractShapeNode(String name, boolean draw, boolean doubl, Color fill) {
+	protected AbstractShapeNode(String name, boolean draw, boolean doubl, ColorSetting fill) {
 		this(name, 
 			DimSetting.MIN_WIDTH.defaultValue(), 
 			DimSetting.MIN_HEIGHT.defaultValue(), 
-			ASPECT_DEF, DRAW_DEF, 
+			ASPECT_DEF, draw, 
 			DOUBLE_DEF, 
-			FILL_DEF_COL);
+			fill);
 	}
 	
 	protected AbstractShapeNode(String name, int minsize) {
@@ -69,7 +72,7 @@ public abstract class AbstractShapeNode implements IShapeNode {
 			int minwidth, int minheight, 
 			double aspect, 
 			boolean draw, boolean doubl, 
-			Color fill) {
+			ColorSetting fill) {
 		this(name, 
 			FONT_DEF_COL,
 			minwidth, minheight, aspect, 
@@ -81,13 +84,13 @@ public abstract class AbstractShapeNode implements IShapeNode {
 	}
 	
 	protected AbstractShapeNode(
-			String name, Color col,
+			String name, ColorSetting col,
 			int minwidth, int minheight, 
 			double aspect,
 			int innerxsep, int innerysep,
 			int outerxsep, int outerysep,
 			boolean draw, boolean doubl, 
-			Color fill) {
+			ColorSetting fill) {
 		super();
 		if (name == null)
 			throw new IllegalArgumentException("L'alias et le nom ne doivent pas être nuls");
@@ -100,6 +103,8 @@ public abstract class AbstractShapeNode implements IShapeNode {
 		if (aspect <= 0) throw new IllegalArgumentException("Le ratio doit être strictement supérieur à 0");
 		
 		if (fill == null || col == null) throw new IllegalArgumentException("Les couleurs ne doivent pas être nulles");
+		
+		this.id = ID++;
 		
 		this.name = name;
 		
@@ -243,7 +248,7 @@ public abstract class AbstractShapeNode implements IShapeNode {
 	}
 
 	@Override
-	public Color getFill() {
+	public ColorSetting getFill() {
 		return fill;
 	}
 
@@ -258,7 +263,7 @@ public abstract class AbstractShapeNode implements IShapeNode {
 	}
 
 	@Override
-	public void setFill(Color c) {
+	public void setFill(ColorSetting c) {
 		if (c == null) throw new IllegalArgumentException();
 		fill = c;
 	}
@@ -275,11 +280,11 @@ public abstract class AbstractShapeNode implements IShapeNode {
 	
 	@Override
 	public Color getFontColor() {
-		return font;
+		return font.col();
 	}
 
 	@Override
-	public void setFontColor(Color c) {
+	public void setFontColor(ColorSetting c) {
 		if (c == null) throw new IllegalArgumentException();
 		font = c;
 	}
@@ -316,7 +321,7 @@ public abstract class AbstractShapeNode implements IShapeNode {
 				y - getOuterYSep(), 
 				h + 2 * getOuterYSep(), 
 				w + 2 * getOuterXSep());
-		g2.setColor(getFill());
+		g2.setColor(getFill().col());
 		fillShape(g2, x, y, h, w);
 		g2.setColor(getFontColor());
 		drawString(g2, x, y, h, w);
@@ -357,6 +362,20 @@ public abstract class AbstractShapeNode implements IShapeNode {
 		if (dy > 0)
 			dy = rec.height - dy;
 		return dx > 0 && dy > 0;
+	}
+	
+	@Override
+	public String latex() {
+		return "\\node (" + id + ") [" + option() + 
+				", fill=" + this.getFill() + 
+				", text=" + this.font + 
+				(draw ? ", draw" : "" ) + "] {" + (name != null ? (name.isEmpty() ? "" : "$" + name + "$") : "") + "};";
+	}
+
+	abstract String option();
+	
+	public int getId() {
+		return id;
 	}
 	
 }

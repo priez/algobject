@@ -16,6 +16,17 @@ public abstract class AbstractCurveEdge implements ICurveEdge {
 	
 	protected EdgeStyle es;
 	
+	AbstractCurveEdge(IShapeNode f, IShapeNode l, String val, EdgeStyle es, Color col) {
+		if (f == null || l == null || val == null || es == null)
+			throw new IllegalArgumentException();
+		
+		this.v = val;
+		this.f = f;
+		this.l = l;
+		this.es = es;
+		this.col = col;
+	}
+	
 	AbstractCurveEdge(IShapeNode f, IShapeNode l, String val, EdgeStyle es) {
 		if (f == null || l == null || val == null || es == null)
 			throw new IllegalArgumentException();
@@ -69,5 +80,12 @@ public abstract class AbstractCurveEdge implements ICurveEdge {
 	public void setEdgeStyle(EdgeStyle es) {
 		if (es == null) throw new IllegalArgumentException();
 		this.es = es;
+	}
+	
+	@Override
+	public String latex() {
+		return "\\path[" +
+			this.es + 
+			"] (" + f.getId() + ") edge node {"+ (v != null ? (v.isEmpty() ? "" : v) : "") + "} (" + l.getId() + ");" ;
 	}
 }

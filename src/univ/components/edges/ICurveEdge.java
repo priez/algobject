@@ -116,7 +116,7 @@ public interface ICurveEdge extends IDrawable {
 		/**
 		 * @return le texte de la sortie java associée au style
 		 */
-		public String getLatex() {
+		public String toString() {
 			return EdgeStyle.this.name().toLowerCase().replace("_", " ");
 		}
 		
@@ -132,4 +132,6 @@ public interface ICurveEdge extends IDrawable {
 	Color getColor();
 	
 	void setEdgeStyle(EdgeStyle es);
+	
+	String latex();
 }

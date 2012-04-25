@@ -1,6 +1,7 @@
 package univ.components.edges;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.QuadCurve2D;
@@ -8,6 +9,10 @@ import java.awt.geom.QuadCurve2D;
 import univ.components.nodes.IShapeNode;
 
 public class DirectEdge extends AbstractCurveEdge {
+	
+	public DirectEdge(IShapeNode f, IShapeNode l, String val, Color col) {
+		super(f, l, val, EdgeStyle.SOLID, col);
+	}
 
 	public DirectEdge(IShapeNode f, IShapeNode l, String val) {
 		super(f, l, val, EdgeStyle.SOLID);

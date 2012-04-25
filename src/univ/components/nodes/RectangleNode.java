@@ -1,13 +1,12 @@
 package univ.components.nodes;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
 public class RectangleNode extends AbstractShapeNode {
 
 	public RectangleNode(String name, boolean draw, boolean doubl,
-			Color fill) {
+			ColorSetting fill) {
 		super(name, draw, doubl, fill);
 	}
 
@@ -15,7 +14,7 @@ public class RectangleNode extends AbstractShapeNode {
 		super(name, draw, doubl);
 	}
 
-	public RectangleNode(String name, boolean draw, Color fill) {
+	public RectangleNode(String name, boolean draw, ColorSetting fill) {
 		super(name, draw, fill);
 	}
 
@@ -23,15 +22,15 @@ public class RectangleNode extends AbstractShapeNode {
 		super(name, draw);
 	}
 
-	public RectangleNode(String name, Color col, int minwidth,
+	public RectangleNode(String name, ColorSetting col, int minwidth,
 			int minheight, double aspect, int innerxsep, int innerysep,
 			int outerxsep, int outerysep, boolean draw, boolean doubl,
-			Color fill) {
+			ColorSetting fill) {
 		super(name, col, minwidth, minheight, aspect, innerxsep, innerysep,
 				outerxsep, outerysep, draw, doubl, fill);
 	}
 
-	public RectangleNode(String name, Color fill) {
+	public RectangleNode(String name, ColorSetting fill) {
 		super(name, fill);
 	}
 
@@ -40,7 +39,7 @@ public class RectangleNode extends AbstractShapeNode {
 	}
 
 	public RectangleNode(String name, int minwidth, int minheight,
-			double aspect, boolean draw, boolean doubl, Color fill) {
+			double aspect, boolean draw, boolean doubl, ColorSetting fill) {
 		super(name, minwidth, minheight, aspect, draw, doubl, fill);
 	}
 
@@ -83,6 +82,12 @@ public class RectangleNode extends AbstractShapeNode {
 		return new Point(
 			getPosition().x + getInnerXSep() + Math.max(stringw, minwidth) / 2,
 			getPosition().y + getInnerYSep() + Math.max(stringh, minheight) / 2);
+	}
+
+	@Override
+	String option() {
+		// FIXME
+		return "rectangle";
 	}
 
 }

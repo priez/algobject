@@ -38,7 +38,6 @@ import univ.listener.PCL;
  * @author EliX
  *
  *
- * @param <N> le type des sommets (associé aux arcs ou arêtes).
  * @param <E> le type des paires : arcs ou arêtes.
  * 
  * @exemple
@@ -80,8 +79,6 @@ public interface IGraphe<E extends IPaire<E>> extends PCL {
 
 	@Deprecated
 	void addSommet(ISommet<E> s);
-	
-	
 	
 	/**
 	 * Ajoute une paire au graphe.
