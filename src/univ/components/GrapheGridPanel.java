@@ -7,8 +7,12 @@ import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import univ.components.edges.ICurveEdge;
 import univ.components.nodes.IShapeNode;
@@ -59,26 +63,61 @@ public class GrapheGridPanel<E extends IPaire<E>> extends GraphePanel<E> {
 		));
 	}
 	
+	private String makeCommand(IShapeNode n, Map<Integer, String> mapTag) {
+		StringBuffer com = new StringBuffer("\\AOn");
+		if (n.getId() / 100 == 0) com.append("o");
+		if (n.getId() / 10 == 0)  com.append("o");
+		com.append(new String(""+ n.getId())
+			.replace("0", "o")
+			.replace("1", "a")
+			.replace("2", "b")
+			.replace("3", "c")
+			.replace("4", "d")
+			.replace("5", "e")
+			.replace("6", "f")
+			.replace("7", "g")
+			.replace("8", "h")
+			.replace("9", "i"));
+		mapTag.put(n.getId(), new String("\\newcommand{" + com.toString() + "}{" + n.latex() + "}\n"));
+		return com.toString();
+	}
+	
 	public String latex() {
 		IShapeNode[][] matrix = new IShapeNode
 				[this.getSize().height / row +1]
 				[this.getSize().width / col +1];
-		int h = 0;
+		Map<IShapeNode, String> map = new HashMap<IShapeNode, String>();
+		SortedMap<Integer, String> mapTag = new TreeMap<Integer, String>();
+		StringBuffer sb = new StringBuffer("{");
+		int h = 0, maxID = 0;
+		String nl;
 		for (IShapeNode n : setnodes) {
 			h = Math.max(h, n.getCenter().y / row);
+			maxID = Math.max(maxID, n.getId());
 			matrix[n.getCenter().y / row][n.getCenter().x / col] = n;
+			nl = makeCommand(n, mapTag);
+			map.put(n, nl);
 		}
-		StringBuffer sb = new StringBuffer("\\begin{tikzpicture}[auto]\n");
+		for (String n : mapTag.values()) {
+			sb.append(n);
+		}
+		sb.append("\\begin{tikzpicture}[auto]\n");
 		sb.append("\\matrix[column sep=.1cm, row sep=.1cm]{\n");
+		String space = "                ";
 		StringBuffer sb2;
 		for (int i = 0; i <= h; i++) {
 			sb2 = new StringBuffer();
+			boolean b;
 			for (int j = 0; j < matrix[i].length; j++) {
+				b = true;
 				if (matrix[i][j] != null) {
-					sb.append(sb2 + matrix[i][j].latex());
+					sb.append(sb2 + " " + map.get(matrix[i][j]) + " ");
+					//sb.append(sb2 + " " + matrix[i][j].latex() + " ");
 					sb2 = new StringBuffer();
+					b = false;
 				}
 				if (j != matrix[i].length - 1) {
+					if (b) sb2.append(space);
 					sb2.append("&");
 				}
 			}
@@ -88,10 +127,10 @@ public class GrapheGridPanel<E extends IPaire<E>> extends GraphePanel<E> {
 		for (ICurveEdge c : setedges) {
 			sb.append(c.latex() + "\n");
 		}
-		sb.append("\\end{tikzpicture}\n");
+		sb.append("\\end{tikzpicture}}\n");
 		return sb.toString();
 	}
-	
+
 	@Override
 	protected void createControllers() {
 		super.createControllers();
