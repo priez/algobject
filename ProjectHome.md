@@ -1,0 +1,3 @@
+Cette bibliothèque a pour but d'implanter un certain nombre d'outils classiques d'algorithmiques en objet.
+
+Les graphes orienté, non-orienté, valué ou non...
